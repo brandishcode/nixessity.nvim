@@ -8,11 +8,34 @@ function Nix:help(targetCmd)
   return cmd:execute({ cmd = 'nix', args = { targetCmd, '--help' } })
 end
 
+local removeFlakeNixSuffix = function(projects)
+  local result = {}
+  for _, v in ipairs(projects) do
+    table.insert(result, string.sub(v, 1, -11)) --remove the '/flake.nix'
+  end
+  return result
+end
+
 --Get the project folders that contains 'flake.nix'
 --@param projectsdir string: The root projects directory
 --@return a list of nix projects
 function Nix:projects(projectsdir)
-  return cmd:execute({ cmd = 'find', args = { projectsdir, '-name', 'flake.nix', '-printf', '%P\n' } })
+  local projects =
+    cmd:execute({ cmd = 'find', args = { projectsdir, '-name', 'flake.nix', '-printf', '%P\n' } })
+  return removeFlakeNixSuffix(projects)
+end
+
+--Build project flake
+--@param projectsdir string: The root nix projects directory
+--@param project string: The project to build
+--@param outputdir string: The build output directory
+function Nix:build(projectsdir, project, outputdir)
+  local finalOutputdir = outputdir .. '/' .. project
+  cmd:execute({ cmd = 'mkdir', args = { '-p', finalOutputdir } })
+  return cmd:execute({
+    cmd = 'nix',
+    args = { 'build', 'path:' .. projectsdir .. '/' .. project, '-o', finalOutputdir .. '/default' },
+  })
 end
 
 return Nix

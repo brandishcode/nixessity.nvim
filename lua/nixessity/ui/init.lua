@@ -25,7 +25,6 @@ function Ui:opendoc(winName, contents)
   log.debug('BufferApi: docOpen: ' .. winName .. ' was opened. win: ' .. win .. ' buf: ' .. buf)
 end
 
-function Ui:openprojects()
-end
+function Ui:openprojects() end
 
 return Ui

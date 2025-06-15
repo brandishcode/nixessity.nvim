@@ -13,7 +13,7 @@ require"nixessity".setup({ projectsdir = '~/nix/projects' })
 |commands|arguments|definitions|
 |-|-|-|
 |Nixhelp|targetCmd {string}|Print the target nix command documentation|
-|Nixprojects|_none_|Open a telescope picker listing nix projects from the projects directory|
+|Nixbuild|_none_|Build a flake from a list of nix flake projects|
 
 # Roadmap
 - Proper documentation viewing
