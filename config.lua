@@ -9,4 +9,4 @@ require 'lazy'.setup({
 })
 
 vim.g.mapleader = ' '
-vim.keymap.set('n', '<leader>lr', '<cmd>Lazy reload ' .. pluginName .. '.nvim<cr>')
+vim.keymap.set('n', '<leader>lr', '<cmd>Lazy reload ' .. pluginName .. '<cr>')
