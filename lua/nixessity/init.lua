@@ -1,5 +1,5 @@
 local nixhelp = require 'nixessity.nix.help'
-local bufferapi = require 'nixessity.buffer-api'
+local ui = require 'nixessity.ui'
 local log = require 'nixessity.log'
 
 local Nixessity = {}
@@ -17,7 +17,7 @@ function Nixessity.setup(opts)
     local cmd = args.fargs[1]
     log.debug('Nixhelp ' .. cmd)
     local doc = nixhelp:run(cmd)
-    bufferapi:opendoc('nixhelp ' .. cmd .. ' --help', doc)
+    ui:opendoc('nixhelp ' .. cmd .. ' --help', doc)
   end, { desc = 'nix {targetcmd} --help', nargs = 1 })
 end
 
