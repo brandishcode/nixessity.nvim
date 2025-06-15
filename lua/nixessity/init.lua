@@ -10,7 +10,7 @@ function Nixessity.setup(opts)
     local cmd = args.fargs[1]
     Log.debug('Nixhelp ' .. cmd)
     local doc = NixHelp:run(cmd)
-    BufferApi:docOpen('Nixhelp ' .. cmd .. ' [HELP]', doc)
+    BufferApi:docOpen('nixhelp ' .. cmd .. ' --help', doc)
   end, { desc = 'nix {targetcmd} --help', nargs = 1 })
 end
 
