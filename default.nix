@@ -41,5 +41,6 @@ mkShell {
   shellHook = ''
     # fix the 'bash: shopt: progcomp: invalid shell option name` error
     export SHELL=/run/current-system/sw/bin/bash
+    export DEBUG_PLENARY=1
   '';
 }
