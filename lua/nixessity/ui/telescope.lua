@@ -4,15 +4,15 @@ local conf = require 'telescope.config'.values
 
 local UiTelescope = {}
 
---Open a telescope picker that contains nix projects
---@param projects string[]: The list of nix projects
-function UiTelescope.openprojects(projects)
+--Open a telescope picker
+--@param list string[]: The list of results to display
+function UiTelescope.openpicker(title, list)
   local opts = {}
   pickers
     .new(opts, {
-      prompt_title = 'Nix projects',
+      prompt_title = title,
       finder = finders.new_table {
-        results = projects,
+        results = list,
       },
       sorter = conf.generic_sorter(opts),
     })

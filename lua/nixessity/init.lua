@@ -25,7 +25,7 @@ function Nixessity.setup(opts)
   vim.api.nvim_create_user_command('Nixprojects', function()
     log.debug('Nixprojects ')
     local projects = nix:projects(opts.projectsdir)
-    uitelescope.openprojects(projects)
+    uitelescope.openpicker('Nix projects', projects)
   end, { desc = 'List nix projects' })
 end
 
