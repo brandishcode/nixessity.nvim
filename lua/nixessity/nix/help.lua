@@ -1,4 +1,4 @@
-local Job = require 'plenary.job'
+local job = require 'plenary.job'
 local NixHelp = {}
 
 --Print the 'nix {targetCmd} --help' documentation
@@ -6,13 +6,13 @@ local NixHelp = {}
 --@return string
 function NixHelp:run(targetCmd)
   local stderrResult = ''
-  local nixCmd = Job:new({
+  local nixCmd = job:new({
     command = 'nix',
     args = { targetCmd, '--help' },
     enable_recording = true,
-    on_exit = function(job)
-      if #job:stderr_result() > 0 then
-        stderrResult = table.concat(job:stderr_result(), '\n')
+    on_exit = function(j)
+      if #j:stderr_result() > 0 then
+        stderrResult = table.concat(j:stderr_result(), '\n')
       end
     end,
   })

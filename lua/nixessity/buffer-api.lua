@@ -1,4 +1,4 @@
-local Log = require 'nixessity.log'
+local log = require 'nixessity.log'
 
 local BufferApi = {}
 
@@ -22,7 +22,10 @@ function BufferApi:opendoc(winName, contents)
   vim.api.nvim_set_option_value('readonly', true, { buf = buf })
   local win = vim.api.nvim_open_win(buf, true, { split = 'above', win = 0 })
   BufferApi.__docbuf = { buf = buf, win = win }
-  Log.debug('BufferApi: docOpen: ' .. winName .. ' was opened. win: ' .. win .. ' buf: ' .. buf)
+  log.debug('BufferApi: docOpen: ' .. winName .. ' was opened. win: ' .. win .. ' buf: ' .. buf)
+end
+
+function BufferApi:openprojects()
 end
 
 return BufferApi
