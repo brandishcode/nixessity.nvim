@@ -8,4 +8,11 @@ function Nix:help(targetCmd)
   return cmd:execute({ cmd = 'nix', args = { targetCmd, '--help' } })
 end
 
+--Get the project folders that contains 'flake.nix'
+--@param projectsdir string: The root projects directory
+--@return a list of nix projects
+function Nix:projects(projectsdir)
+  return cmd:execute({ cmd = 'find', args = { projectsdir, '-name', 'flake.nix', '-printf', '%P\n' } })
+end
+
 return Nix
