@@ -6,14 +6,14 @@ For all your nix flake command necessities.
 
 # Setup
 ```lua
-require"nixessity".setup({ projectsdir = '~/nix/projects' })
+require"nixessity".setup({ projectsdir = '~/nix/projects', outputdir = './nixessity' })
 ```
 
 # Features
 |commands|arguments|definitions|
 |-|-|-|
-|Nixhelp|targetCmd {string}|Print the target nix command documentation|
-|Nixbuild|_none_|Build a flake from a list of nix flake projects|
+|Nixhelp|`build`, `run`, and etc.|Print the target nix command documentation|
+|Nixbuild|_none_|Build default package of a nix flake project from a list of nix flake projects|
 
 # Roadmap
 - Proper documentation viewing
