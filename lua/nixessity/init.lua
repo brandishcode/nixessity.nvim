@@ -8,9 +8,6 @@ local Nixessity = {}
 Nixessity.__projectsdir = ''
 Nixessity.__outputdir = './.nixessity'
 
-local function assertProjectdirs(projectsdir)
-  assert(projectsdir, 'projectsdir should be set')
-end
 
 --Nix <cmd> --help wrapper 
 --@param cmd string: The target command
@@ -32,8 +29,8 @@ end
 
 function Nixessity.setup(opts)
   opts = opts or {}
-  assertProjectdirs(opts.projectsdir)
   Nixessity.__projectsdir = opts.projectsdir
+  assert(Nixessity.__projectsdir, 'projectsdir should be set')
   Nixessity.__outputdir = opts.outputdir or Nixessity.__outputdir
 
   vim.api.nvim_create_user_command('Nixhelp', function(args)
