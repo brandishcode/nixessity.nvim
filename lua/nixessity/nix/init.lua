@@ -38,4 +38,18 @@ function Nix:build(projectsdir, project, outputdir)
   })
 end
 
+--Evaluate project flake
+--@param project string: The project to eval
+function Nix:eval(project)
+  return cmd:execute({
+    cmd = 'nix',
+    args = {
+      'eval',
+      '--expr',
+      '((builtins.getFlake "' .. project .. '").packages.${builtins.currentSystem})',
+      '--impure',
+    },
+  })
+end
+
 return Nix

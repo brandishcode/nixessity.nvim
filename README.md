@@ -14,6 +14,7 @@ require"nixessity".setup({ projectsdir = '~/nix/projects', outputdir = './nixess
 |-|-|-|
 |Nixhelp|`build`, `run`, and etc.|Print the target nix command documentation|
 |Nixbuild|_none_|Build default package of a nix flake project from a list of nix flake projects|
+|Nixeval|project directory|Evaluate a nix flake project|
 
 # Roadmap
 - Proper documentation viewing

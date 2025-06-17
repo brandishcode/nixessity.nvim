@@ -8,8 +8,7 @@ local Nixessity = {}
 Nixessity.__projectsdir = ''
 Nixessity.__outputdir = './.nixessity'
 
-
---Nix <cmd> --help wrapper 
+--Nix <cmd> --help wrapper
 --@param cmd string: The target command
 --@return the help document
 function Nixessity:help(cmd)
@@ -27,6 +26,10 @@ function Nixessity:build()
   end)
 end
 
+function Nixessity:eval(project)
+  vim.api.nvim_put(nix:eval(project), '', false, true)
+end
+
 function Nixessity.setup(opts)
   opts = opts or {}
   Nixessity.__projectsdir = opts.projectsdir
@@ -41,6 +44,10 @@ function Nixessity.setup(opts)
   vim.api.nvim_create_user_command('Nixbuild', function()
     Nixessity:build()
   end, { desc = 'List nix projects' })
+
+  vim.api.nvim_create_user_command('Nixeval', function(args)
+    Nixessity:eval(args.fargs[1])
+  end, { desc = 'nix eval --expr {project} --impure', nargs = 1 })
 end
 
 return Nixessity
