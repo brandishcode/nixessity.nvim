@@ -22,12 +22,22 @@ function Nixessity:build()
   local projects = nix:projects(Nixessity.__projectsdir)
   uitelescope.openpicker('Nix projects', projects, function(project)
     log.debug('Nixbuild ' .. project)
-    nix:build(Nixessity.__projectsdir, project, Nixessity.__outputdir)
+    local expr = 'builtins.attrNames ((builtins.getFlake "'
+      .. Nixessity.__projectsdir
+      .. '/'
+      .. project
+      .. '").packages.${builtins.currentSystem})'
+    local flake = vim.fn.json_decode(nix:eval('', expr))
+    --TODO: split this nested function calls
+    uitelescope.openpicker('Nix flake packages', flake, function(pkg)
+      nix:build(Nixessity.__projectsdir, project, Nixessity.__outputdir, pkg)
+    end)
   end)
 end
 
 function Nixessity:eval(project)
-  vim.api.nvim_put(nix:eval(project), '', false, true)
+  local expr = '((builtins.getFlake "' .. project .. '").packages.${builtins.currentSystem})'
+  vim.api.nvim_put(nix:eval(project, expr), '', false, true)
 end
 
 function Nixessity.setup(opts)

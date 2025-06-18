@@ -29,25 +29,33 @@ end
 --@param projectsdir string: The root nix projects directory
 --@param project string: The project to build
 --@param outputdir string: The build output directory
-function Nix:build(projectsdir, project, outputdir)
+--@param pkg string: Target package to build
+function Nix:build(projectsdir, project, outputdir, pkg)
   local finalOutputdir = outputdir .. '/' .. project
   cmd:execute({ cmd = 'mkdir', args = { '-p', finalOutputdir } })
   return cmd:execute({
     cmd = 'nix',
-    args = { 'build', 'path:' .. projectsdir .. '/' .. project, '-o', finalOutputdir .. '/default' },
+    args = {
+      'build',
+      'path:' .. projectsdir .. '/' .. project .. '#' .. pkg,
+      '-o',
+      finalOutputdir .. '/' .. pkg,
+    },
   })
 end
 
 --Evaluate project flake
 --@param project string: The project to eval
-function Nix:eval(project)
+--@param expr string: The nix expression
+function Nix:eval(project, expr) --TODO: split the project from the expr
   return cmd:execute({
     cmd = 'nix',
     args = {
       'eval',
       '--expr',
-      '((builtins.getFlake "' .. project .. '").packages.${builtins.currentSystem})',
+      expr,
       '--impure',
+      '--json',
     },
   })
 end
