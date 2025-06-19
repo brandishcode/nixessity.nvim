@@ -44,10 +44,9 @@ function Nix:build(projectsdir, project, outputdir, pkg)
   })
 end
 
---Evaluate project flake
---@param project string: The project to eval
+--Evaluate a nix flake
 --@param expr string: The nix expression
-function Nix:eval(project, expr) --TODO: split the project from the expr
+function Nix:eval(expr)
   return cmd:execute({
     cmd = 'nix',
     args = {

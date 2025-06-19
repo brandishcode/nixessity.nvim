@@ -1,4 +1,5 @@
 local nix = require 'nixessity.nix'
+local eb = require 'nixessity.nix.builder'
 local ui = require 'nixessity.ui'
 local uitelescope = require 'nixessity.ui.telescope'
 local log = require 'nixessity.log'
@@ -22,14 +23,24 @@ function Nixessity:build()
   local projects = nix:projects(Nixessity.__projectsdir)
   uitelescope.openpicker('Nix projects', projects, function(project)
     log.debug('Nixbuild ' .. project)
-    local expr = 'builtins.attrNames ((builtins.getFlake "'
-      .. Nixessity.__projectsdir
-      .. '/'
-      .. project
-      .. '").packages.${builtins.currentSystem})'
-    local flake = vim.fn.json_decode(nix:eval('', expr))
-    --TODO: split this nested function calls
-    uitelescope.openpicker('Nix flake packages', flake, function(pkg)
+    local expr = eb:new()
+      :builtins('attrNames', {
+        val = eb:new()
+          :builtins(
+            'getFlake',
+            { val = Nixessity.__projectsdir .. '/' .. project, isString = true }
+          )
+          :wrap()
+          :attr('packages')
+          :attr('${builtins.currentSystem}')
+          :wrap()
+          :build(),
+        isString = false,
+      })
+      :build()
+    log.debug(expr)
+    local output = vim.fn.json_decode(nix:eval(expr))
+    uitelescope.openpicker('Nix flake packages', output, function(pkg)
       nix:build(Nixessity.__projectsdir, project, Nixessity.__outputdir, pkg)
     end)
   end)
