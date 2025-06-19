@@ -18,25 +18,25 @@ function ExpressionBuilder:builtins(funcname, ...)
   local funcargs = ''
   for _, v in ipairs(args) do
     if v.isString then
-      funcargs = funcargs .. ' "' .. v.val .. '"'
+      funcargs = string.format('%s "%s"', funcargs, v.val)
     else
-      funcargs = funcargs .. ' ' .. v.val
+      funcargs = string.format('%s %s', funcargs, v.val)
     end
   end
-  self.__acc = self.__acc .. 'builtins.' .. funcname .. funcargs
+  self.__acc = string.format('builtins.%s %s', funcname, funcargs)
   return self
 end
 
 --Wrap nix expression with parenthesis
 function ExpressionBuilder:wrap()
-  self.__acc = '(' .. self.__acc .. ')'
+  self.__acc = string.format('(%s)', self.__acc)
   return self
 end
 
 --Get nix expression attribute
 --@param attrName string: The attribute name
 function ExpressionBuilder:attr(attrName)
-  self.__acc = self.__acc .. '.' .. attrName
+  self.__acc = string.format('%s.%s', self.__acc, attrName)
   return self
 end
 

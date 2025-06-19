@@ -22,7 +22,6 @@ end
 function Nixessity:build()
   local projects = nix:projects(Nixessity.__projectsdir)
   uitelescope.openpicker('Nix projects', projects, function(project)
-    log.debug('Nixbuild ' .. project)
     local expr = eb:new()
       :builtins('attrNames', {
         val = eb:new()
@@ -38,7 +37,7 @@ function Nixessity:build()
         isString = false,
       })
       :build()
-    log.debug(expr)
+    log.debug('Nixbuild ' .. expr)
     local output = vim.fn.json_decode(nix:eval(expr))
     uitelescope.openpicker('Nix flake packages', output, function(pkg)
       nix:build(Nixessity.__projectsdir, project, Nixessity.__outputdir, pkg)
