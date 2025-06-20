@@ -10,11 +10,8 @@ ExpressionBuilder.__acc = ''
 --@field val string: The argument value
 --@field isString boolean: The value is of type string, if set to true the argument will be wrapped in double quotes
 
---Nix builtins function expression builder
---@param funcname string: The function name
---@vararg Arg[]: The function arguments
-function ExpressionBuilder:builtins(funcname, ...)
-  local args = { ... }
+--Create function arguments
+local function createFuncArgs(args)
   local funcargs = ''
   for _, v in ipairs(args) do
     if v.isString then
@@ -23,6 +20,23 @@ function ExpressionBuilder:builtins(funcname, ...)
       funcargs = string.format('%s %s', funcargs, v.val)
     end
   end
+  return funcargs
+end
+--
+--Nix function expression builder
+--@param funcname string: The function name
+--@vararg Arg[]: The function arguments
+function ExpressionBuilder:func(funcname, ...)
+  local funcargs = createFuncArgs({ ... })
+  self.__acc = string.format('%s %s', funcname, funcargs)
+  return self
+end
+
+--Nix builtins function expression builder
+--@param funcname string: The function name
+--@vararg Arg[]: The function arguments
+function ExpressionBuilder:builtins(funcname, ...)
+  local funcargs = createFuncArgs({ ... })
   self.__acc = string.format('builtins.%s %s', funcname, funcargs)
   return self
 end
