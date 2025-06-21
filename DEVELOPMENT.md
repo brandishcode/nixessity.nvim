@@ -5,6 +5,7 @@ Methods:
 - [builtins](#builtins)
 - [wrap](#wrap)
 - [attr](#attr)
+- [func](#func)
 
 ## builtins
 Creates a nix expression using `builtins` functions.
@@ -32,3 +33,13 @@ local eb = require'nixessity.nix.builder'
 local expr = eb.new().builtins('getFlake', { val = '/path/to/my/nix/flake/project', isString = true }):wrap():attr('x'):build()
 ```
 The above example will create `(builtins.getFlake "/path/to/my/nix/flake/project").x`
+
+## func
+Creates a nix function expression.
+Example:
+```lua
+local eb = require'nixessity.nix.builder'
+local expr = eb.new().func('myFunction', { val = 23, isString = false }):build()
+```
+
+The above example will create `myFunction 23`.
