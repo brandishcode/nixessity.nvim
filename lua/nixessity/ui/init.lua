@@ -25,6 +25,20 @@ function Ui:opendoc(winName, contents)
   log.debug('BufferApi: docOpen: ' .. winName .. ' was opened. win: ' .. win .. ' buf: ' .. buf)
 end
 
+--Open a input prompt
+--@param list string[]: The list of selections
+function Ui:prompt(list)
+  local selections = {}
+  for i, v in ipairs(list) do
+    table.insert(selections, string.format('%d. %s', i, v))
+  end
+  local idx = vim.fn.inputlist(selections)
+  if idx > #selections then
+    error('Invalid project selected!', 0)
+  end
+  return list[idx]
+end
+
 function Ui:openprojects() end
 
 return Ui

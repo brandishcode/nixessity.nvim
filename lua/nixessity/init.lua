@@ -1,7 +1,6 @@
 local nix = require 'nixessity.nix'
 local eb = require 'nixessity.nix.builder'
 local ui = require 'nixessity.ui'
-local uitelescope = require 'nixessity.ui.telescope'
 local log = require 'nixessity.log'
 
 local Nixessity = {}
@@ -21,28 +20,23 @@ end
 --Nix build wrapper
 function Nixessity:build()
   local projects = nix:projects(Nixessity.__projectsdir)
-  uitelescope.openpicker('Nix projects', projects, function(project)
-    local expr = eb:new()
-      :builtins('attrNames', {
-        val = eb:new()
-          :builtins(
-            'getFlake',
-            { val = Nixessity.__projectsdir .. '/' .. project, isString = true }
-          )
-          :wrap()
-          :attr('packages')
-          :attr('${builtins.currentSystem}')
-          :wrap()
-          :build(),
-        isString = false,
-      })
-      :build()
-    log.debug('Nixbuild ' .. expr)
-    local output = nix:eval(expr, true)
-    uitelescope.openpicker('Nix flake packages', output, function(pkg)
-      nix:build(Nixessity.__projectsdir, project, Nixessity.__outputdir, pkg)
-    end)
-  end)
+  local project = ui:prompt(projects)
+  local expr = eb:new()
+    :builtins('attrNames', {
+      val = eb:new()
+        :builtins('getFlake', { val = Nixessity.__projectsdir .. '/' .. project, isString = true })
+        :wrap()
+        :attr('packages')
+        :attr('${builtins.currentSystem}')
+        :wrap()
+        :build(),
+      isString = false,
+    })
+    :build()
+  local pkgs = nix:eval(expr, true)
+  local pkg = ui:prompt(pkgs)
+  nix:build(Nixessity.__projectsdir, project, Nixessity.__outputdir, pkg)
+  log.debug('Nixbuild ' .. expr)
 end
 
 --Nix expr wrapper

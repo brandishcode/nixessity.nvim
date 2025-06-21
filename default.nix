@@ -14,14 +14,12 @@ let
 
   # neovim setup
   luaRcContent = builtins.readFile (
-    with vimPlugins;
     replaceVars ./config.lua {
       inherit moduleName pname;
-      telescope = "${telescope-nvim}";
     }
   );
   # a list of nixvim module dependencies
-  pluginDeps = with vimPlugins; [ telescope-nvim ];
+  pluginDeps = with vimPlugins; [ plenary-nvim ];
   plugins =
     with vimPlugins;
     [
