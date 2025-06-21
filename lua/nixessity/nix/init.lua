@@ -30,18 +30,20 @@ end
 --@param project string: The project to build
 --@param outputdir string: The build output directory
 --@param pkg string: Target package to build
+--@param string: The output path
 function Nix:build(projectsdir, project, outputdir, pkg)
   local finalOutputdir = outputdir .. '/' .. project
   cmd:execute({ cmd = 'mkdir', args = { '-p', finalOutputdir } })
-  return cmd:execute({
+  return table.concat(cmd:execute({
     cmd = 'nix',
     args = {
       'build',
       'path:' .. projectsdir .. '/' .. project .. '#' .. pkg,
       '-o',
       finalOutputdir .. '/' .. pkg,
+      '--print-out-paths',
     },
-  })
+  }))
 end
 
 --Evaluate a nix flake
