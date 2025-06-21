@@ -46,17 +46,29 @@ end
 
 --Evaluate a nix flake
 --@param expr string: The nix expression
-function Nix:eval(expr)
-  return cmd:execute({
+--@param json boolean: set true if json return is needed
+function Nix:eval(expr, json)
+  local args = {
+    'eval',
+    '--expr',
+    expr,
+    '--impure',
+  }
+
+  if json then
+    table.insert(args, '--json')
+  end
+
+  local result = cmd:execute({
     cmd = 'nix',
-    args = {
-      'eval',
-      '--expr',
-      expr,
-      '--impure',
-      '--json',
-    },
+    args = args,
   })
+
+  if json then
+    result = vim.fn.json_decode(result)
+  end
+
+  return result
 end
 
 return Nix

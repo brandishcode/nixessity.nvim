@@ -14,7 +14,7 @@ require"nixessity".setup({ projectsdir = '~/nix/projects', outputdir = './nixess
 |-|-|-|
 |Nixhelp|`build`, `run`, and etc.|Print the target nix command documentation|
 |Nixbuild|_none_|Build a package of a nix flake project from a list of nix flake projects|
-|Nixeval|project directory|Evaluate a nix flake project|
+|Nixeval|nix expression, e.g.: `Nixeval 1 + 3` results to `4`|Evaluate a nix expression|
 
 # Roadmap
 - Proper documentation viewing

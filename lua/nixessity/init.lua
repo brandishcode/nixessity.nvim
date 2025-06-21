@@ -38,16 +38,16 @@ function Nixessity:build()
       })
       :build()
     log.debug('Nixbuild ' .. expr)
-    local output = vim.fn.json_decode(nix:eval(expr))
+    local output = nix:eval(expr, true)
     uitelescope.openpicker('Nix flake packages', output, function(pkg)
       nix:build(Nixessity.__projectsdir, project, Nixessity.__outputdir, pkg)
     end)
   end)
 end
 
-function Nixessity:eval(project)
-  local expr = '((builtins.getFlake "' .. project .. '").packages.${builtins.currentSystem})'
-  vim.api.nvim_put(nix:eval(project, expr), '', false, true)
+--Nix expr wrapper
+function Nixessity:eval(expr)
+  vim.api.nvim_put(nix:eval(expr), '', false, true)
 end
 
 function Nixessity.setup(opts)
@@ -66,7 +66,7 @@ function Nixessity.setup(opts)
   end, { desc = 'List nix projects' })
 
   vim.api.nvim_create_user_command('Nixeval', function(args)
-    Nixessity:eval(args.fargs[1])
+    Nixessity:eval(args.args)
   end, { desc = 'nix eval --expr {project} --impure', nargs = 1 })
 end
 
