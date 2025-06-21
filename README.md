@@ -19,6 +19,7 @@ require"nixessity".setup({ projectsdir = '~/nix/projects', outputdir = './nixess
 # Roadmap
 - Proper documentation viewing
 - `nix build` wrapping
+- `nix eval` wrapping
 
 # Development
 See [DEVELOPMENT](./DEVELOPMENT.md)
