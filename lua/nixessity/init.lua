@@ -22,7 +22,17 @@ function Nixessity:build()
   local projectsdir = Nixessity.__projectsdir
   local outputdir = Nixessity.__outputdir
   local projects = nix:projects(projectsdir)
-  local project = ui:prompt(projects)
+  local projectsMod = {}
+
+  for _, v in ipairs(projects) do
+    if v == '' then
+      table.insert(projectsMod, '<root>')
+    else
+      table.insert(projectsMod, v)
+    end
+  end
+
+  local project = ui:prompt(projectsMod)
   if project then
     local expr = eb:new()
       :builtins('attrNames', {
