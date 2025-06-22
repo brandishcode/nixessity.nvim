@@ -2,11 +2,11 @@ local nix = require 'nixessity.nix'
 local eb = require 'nixessity.nix.builder'
 local ui = require 'nixessity.ui'
 local log = require 'nixessity.log'
+local storage = require 'nixessity.storage'
 
 local Nixessity = {}
 
 Nixessity.__projectsdir = ''
-Nixessity.__outputdir = './.nixessity'
 
 --Nix <cmd> --help wrapper
 --@param cmd string: The target command
@@ -20,7 +20,6 @@ end
 --Nix build wrapper
 function Nixessity:build()
   local projectsdir = Nixessity.__projectsdir
-  local outputdir = Nixessity.__outputdir
   local projects = nix:projects(projectsdir)
   local projectsMod = {}
 
@@ -34,10 +33,11 @@ function Nixessity:build()
 
   local project = ui:prompt(projectsMod)
   if project then
+    local flake = projectsdir .. '/' .. project
     local expr = eb:new()
       :builtins('attrNames', {
         val = eb:new()
-          :builtins('getFlake', { val = projectsdir .. '/' .. project, isString = true })
+          :builtins('getFlake', { val = flake, isString = true })
           :wrap()
           :attr('packages')
           :attr('${builtins.currentSystem}')
@@ -49,7 +49,8 @@ function Nixessity:build()
     local pkgs = nix:eval(expr, true)
     local pkg = ui:prompt(pkgs)
     log.debug('Nixbuild ' .. expr)
-    local outputpath = nix:build(projectsdir, project, outputdir, pkg)
+    local outputpath = nix:build(projectsdir, project, pkg)
+    storage:add({ id = outputpath, flake = flake })
   end
 end
 
@@ -64,14 +65,21 @@ function Nixessity.setup(opts)
   assert(Nixessity.__projectsdir, 'projectsdir should be set')
   Nixessity.__outputdir = opts.outputdir or Nixessity.__outputdir
 
+  storage:init()
+
   vim.api.nvim_create_user_command('Nixhelp', function(args)
     local cmd = args.fargs[1]
     Nixessity:help(cmd)
   end, { desc = 'nix {targetcmd} --help', nargs = 1 })
 
-  vim.api.nvim_create_user_command('Nixbuild', function()
-    Nixessity:build()
-  end, { desc = 'List nix projects' })
+  vim.api.nvim_create_user_command('Nixbuild', function(args)
+    local cmd = args.fargs[1]
+    if not cmd then
+      Nixessity:build()
+    elseif cmd == 'list' then
+      print(vim.inspect(storage:read()))
+    end
+  end, { desc = 'List nix projects', nargs = '?' })
 
   vim.api.nvim_create_user_command('Nixeval', function(args)
     Nixessity:eval(args.args)

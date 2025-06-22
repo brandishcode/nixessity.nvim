@@ -12,9 +12,10 @@ let
   moduleName = (lib.strings.removeSuffix ".nvim" pname);
 
   # neovim setup
-  luaRcContent = ''
+  luaRcContent = with vimPlugins; ''
     local pluginName = '${pname}'
     local moduleName = '${moduleName}'
+    local sqlite = '${sqlite-lua}'
 
     require 'lazy'.setup({
       {
@@ -23,13 +24,19 @@ let
           require(moduleName).setup({ projectsdir = vim.fn.getcwd() .. '/sandbox' })
         end,
       },
+      {
+        dir = sqlite
+      }
     })
 
     vim.g.mapleader = ' '
     vim.keymap.set('n', '<leader>lr', '<cmd>Lazy reload ' .. pluginName .. '<cr>')
   '';
   # a list of nixvim module dependencies
-  pluginDeps = with vimPlugins; [ plenary-nvim ];
+  pluginDeps = with vimPlugins; [
+    plenary-nvim
+    sqlite-lua
+  ];
   plugins =
     with vimPlugins;
     [

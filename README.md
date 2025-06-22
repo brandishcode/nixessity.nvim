@@ -10,11 +10,34 @@ require"nixessity".setup({ projectsdir = '~/nix/projects', outputdir = './nixess
 ```
 
 # Features
-|commands|arguments|definitions|
-|-|-|-|
-|Nixhelp|`build`, `run`, and etc.|Print the target nix command documentation|
-|Nixbuild|_none_|Build a package of a nix flake project from a list of nix flake projects|
-|Nixeval|nix expression, e.g.: `Nixeval 1 + 3` results to `4`|Evaluate a nix expression|
+<table>
+<tbody>
+<tr>
+<th>commands</th>
+<th>arguments</th>
+<th>definitions</th>
+</tr>
+<tr>
+<td>Nixhelp</td>
+<td><code>build</code>, <code>run</code>, and etc.</td>
+<td>Print the target nix command documentation</td>
+</tr>
+<tr>
+<td rowspan="2">Nixbuild</td>
+<td><em>none</em></td>
+<td>Build a package of a nix flake project from a list of nix flake projects</td>
+</tr>
+<tr>
+<td><code>list</code></td>
+<td>List built packages by nixessity</td>
+</tr>
+<tr>
+<td>Nixeval</td>
+<td>nix expression, e.g.: <code>{ x = 1 + 3; }</code> results to <code>{ x = 4; }</code></td>
+<td>Evaluate a nix expression</td>
+</tr>
+</tbody>
+</table>
 
 # Roadmap
 - Proper documentation viewing
