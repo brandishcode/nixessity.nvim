@@ -23,22 +23,24 @@ function Nixessity:build()
   local outputdir = Nixessity.__outputdir
   local projects = nix:projects(projectsdir)
   local project = ui:prompt(projects)
-  local expr = eb:new()
-    :builtins('attrNames', {
-      val = eb:new()
-        :builtins('getFlake', { val = projectsdir .. '/' .. project, isString = true })
-        :wrap()
-        :attr('packages')
-        :attr('${builtins.currentSystem}')
-        :wrap()
-        :build(),
-      isString = false,
-    })
-    :build()
-  local pkgs = nix:eval(expr, true)
-  local pkg = ui:prompt(pkgs)
-  log.debug('Nixbuild ' .. expr)
-  local outputpath = nix:build(projectsdir, project, outputdir, pkg)
+  if project then
+    local expr = eb:new()
+      :builtins('attrNames', {
+        val = eb:new()
+          :builtins('getFlake', { val = projectsdir .. '/' .. project, isString = true })
+          :wrap()
+          :attr('packages')
+          :attr('${builtins.currentSystem}')
+          :wrap()
+          :build(),
+        isString = false,
+      })
+      :build()
+    local pkgs = nix:eval(expr, true)
+    local pkg = ui:prompt(pkgs)
+    log.debug('Nixbuild ' .. expr)
+    local outputpath = nix:build(projectsdir, project, outputdir, pkg)
+  end
 end
 
 --Nix expr wrapper
