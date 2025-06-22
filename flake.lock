@@ -7,11 +7,11 @@
         "treefmt-nix": "treefmt-nix"
       },
       "locked": {
-        "lastModified": 1749904880,
-        "narHash": "sha256-XdyOOWqzi9If8aSL+L/RlKfgy9YavnJI2ov+JlUOcOE=",
+        "lastModified": 1750606847,
+        "narHash": "sha256-tjs/pXMk3Pav9OFs7mtBWxMb0J5KDMG6fpI87/DYb44=",
         "owner": "brandishcode",
         "repo": "brandishcode-formatter",
-        "rev": "295006d9ca45862c6e7be03e99adfe5ce7846c6a",
+        "rev": "dea63e5fd24f161b3baea57e7e8e7a703c3a5b4d",
         "type": "github"
       },
       "original": {

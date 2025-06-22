@@ -1,42 +1,55 @@
 # ExpressionBuilder
+
 Creates a nix expression for `nix eval` to evaluate.
 
 Methods:
+
 - [builtins](#builtins)
 - [wrap](#wrap)
 - [attr](#attr)
 - [func](#func)
 
 ## builtins
+
 Creates a nix expression using `builtins` functions.
 Example:
+
 ```lua
 local eb = require'nixessity.nix.builder'
 local expr = eb.new().builtins('getFlake', { val = '/path/to/my/nix/flake/project', isString = true }):build()
 ```
+
 The above example will create `builtins.getFlake "/path/to/my/nix/flake/project"`.
 
 ## wrap
+
 Wraps a nix expression with parentheses.
 Example:
+
 ```lua
 local eb = require'nixessity.nix.builder'
 local expr = eb.new().builtins('isString', { val = 8, isString = false }):wrap():build()
 ```
+
 The above example will create `(builtins.isString 8)`
 
 ## attr
+
 Add attribute accessor to a nix expression.
 Example:
+
 ```lua
 local eb = require'nixessity.nix.builder'
 local expr = eb.new().builtins('getFlake', { val = '/path/to/my/nix/flake/project', isString = true }):wrap():attr('x'):build()
 ```
+
 The above example will create `(builtins.getFlake "/path/to/my/nix/flake/project").x`
 
 ## func
+
 Creates a nix function expression.
 Example:
+
 ```lua
 local eb = require'nixessity.nix.builder'
 local expr = eb.new().func('myFunction', { val = 23, isString = false }):build()

@@ -1,15 +1,18 @@
 # Nixessity
+
 For all your nix flake command necessities.
 
 > [!WARNING]
 > Plugin is still in development.
 
 # Setup
+
 ```lua
 require"nixessity".setup({ projectsdir = '~/nix/projects', outputdir = './nixessity' })
 ```
 
 # Features
+
 <table>
 <tbody>
 <tr>
@@ -40,9 +43,11 @@ require"nixessity".setup({ projectsdir = '~/nix/projects', outputdir = './nixess
 </table>
 
 # Roadmap
+
 - Proper documentation viewing
 - `nix build` wrapping
 - `nix eval` wrapping
 
 # Development
+
 See [DEVELOPMENT](./DEVELOPMENT.md)
