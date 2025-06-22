@@ -4,7 +4,6 @@
   neovim,
   wrapNeovimUnstable,
   vimPlugins,
-  replaceVars,
   pname,
   ...
 }:
@@ -13,11 +12,22 @@ let
   moduleName = (lib.strings.removeSuffix ".nvim" pname);
 
   # neovim setup
-  luaRcContent = builtins.readFile (
-    replaceVars ./config.lua {
-      inherit moduleName pname;
-    }
-  );
+  luaRcContent = ''
+    local pluginName = '${pname}'
+    local moduleName = '${moduleName}'
+
+    require 'lazy'.setup({
+      {
+        dir = vim.fn.getcwd(),
+        config = function()
+          require(moduleName).setup({ projectsdir = vim.fn.getcwd() .. '/sandbox' })
+        end,
+      },
+    })
+
+    vim.g.mapleader = ' '
+    vim.keymap.set('n', '<leader>lr', '<cmd>Lazy reload ' .. pluginName .. '<cr>')
+  '';
   # a list of nixvim module dependencies
   pluginDeps = with vimPlugins; [ plenary-nvim ];
   plugins =
