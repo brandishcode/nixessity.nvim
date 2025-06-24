@@ -69,4 +69,28 @@ function Nix:eval(expr, json)
   return result
 end
 
+--Verify integrity of a nix store path
+--@param storepath string: the nix store path to verify
+--@return true if verification success, otherwise false
+function Nix:verifyStorePath(storepath)
+  local args = {
+    'store',
+    'verify',
+    storepath,
+    '--quiet',
+  }
+
+  local result = cmd:execute({
+    cmd = 'nix',
+    args = args,
+    returnError = true,
+  })
+
+  if table.concat(result, '\n') == '' then
+    return true
+  end
+
+  return false
+end
+
 return Nix
