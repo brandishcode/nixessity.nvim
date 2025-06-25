@@ -35,7 +35,7 @@ end
 --@param item : Item to be added
 --@return true if successfully added
 function Storage:add(item)
-  Storage.__db.nixbuild:remove { id = item.id }
+  Storage:remove(item)
   item.timestamp = db.lib.julianday 'now'
   return Storage.__db.nixbuild:insert {
     id = item.id,
@@ -44,7 +44,7 @@ function Storage:add(item)
 end
 
 --Read the item in storage
---@param item StorageItem:nil: item to be read, if nil read all
+--@param item StorageItem|nil: item to be read, if nil read all
 function Storage:read(item)
   if item then
     return Storage.__db.nixbuild:get {
@@ -61,6 +61,12 @@ function Storage:read(item)
       query = { all = 1 },
     })
   end
+end
+
+--Remove the item from storage
+--@param item StorageItem: item to be removed
+function Storage:remove(item)
+  Storage.__db.nixbuild:remove { id = item.id }
 end
 
 return Storage

@@ -77,7 +77,16 @@ function Nixessity.setup(opts)
     if not cmd then
       Nixessity:build()
     elseif cmd == 'list' then
-      print(vim.inspect(storage:read()))
+      local nixbuilds = storage:read()
+      local paths = {}
+      for _, v in ipairs(nixbuilds) do
+        if nix:verifyStorePath(v.id) then
+          table.insert(paths, v.id)
+        else
+          storage:remove(v)
+        end
+      end
+      ui:prompt(paths)
     end
   end, { desc = 'List nix projects', nargs = '?' })
 
