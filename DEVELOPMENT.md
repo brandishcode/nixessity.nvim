@@ -61,6 +61,10 @@ The above example will create `myFunction 23`.
 
 Nix command wrappers and/or implementations.
 
+Methods:
+
+- [verifyStorePath](#verifystorepath)
+
 ## verifyStorePath
 
 Verify the integrity of the store paths.
