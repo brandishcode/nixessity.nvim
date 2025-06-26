@@ -11,6 +11,11 @@ For all your nix flake command necessities.
 require"nixessity".setup({ projectsdir = '~/nix/projects', outputdir = './nixessity' })
 ```
 
+# Dependencies
+
+- [plenary.nvim](https://github.com/nvim-lua/plenary.nvim)
+- [sqlite.lua](https://github.com/kkharji/sqlite.lua)
+
 # Features
 
 <table>
