@@ -8,7 +8,7 @@ For all your nix flake command necessities.
 # Setup
 
 ```lua
-require"nixessity".setup({ projectsdir = '~/nix/projects', outputdir = './nixessity' })
+require"nixessity".setup({ projectsdir = '~/nix/projects' })
 ```
 
 # Dependencies

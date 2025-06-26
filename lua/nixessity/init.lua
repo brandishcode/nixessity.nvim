@@ -63,7 +63,6 @@ function Nixessity.setup(opts)
   opts = opts or {}
   Nixessity.__projectsdir = opts.projectsdir
   assert(Nixessity.__projectsdir, 'projectsdir should be set')
-  Nixessity.__outputdir = opts.outputdir or Nixessity.__outputdir
 
   storage:init()
 
