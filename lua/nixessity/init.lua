@@ -21,6 +21,12 @@ end
 function Nixessity:build()
   local projectsdir = Nixessity.__projectsdir
   local projects = nix:projects(projectsdir)
+
+  if #projects <= 0 then
+    log.warn('No nix flake projects found!')
+    return
+  end
+
   local projectsMod = {}
 
   for _, v in ipairs(projects) do
