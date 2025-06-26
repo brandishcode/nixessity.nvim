@@ -8,17 +8,17 @@ local Nixessity = {}
 
 Nixessity.__projectsdir = ''
 
---Nix <cmd> --help wrapper
---@param cmd string: The target command
+--Nix <command> --help wrapper
+--@param command string: The target command
 --@return the help document
-function Nixessity:help(cmd)
-  log.debug('Nixhelp ' .. cmd)
-  local doc = nix:help(cmd)
-  ui:opendoc('nixhelp ' .. cmd .. ' --help', doc)
+function Nixessity:help(command)
+  log.debug('Nixhelp ' .. command)
+  local doc = nix:help(command)
+  ui:opendoc('nixhelp ' .. command .. ' --help', doc)
 end
 
---Nix build wrapper
-function Nixessity:build()
+--Nix build
+local function build()
   local projectsdir = Nixessity.__projectsdir
   local projects = nix:projects(projectsdir)
 
@@ -60,6 +60,29 @@ function Nixessity:build()
   end
 end
 
+--Nix build list
+local function buildlist()
+  local nixbuilds = storage:read()
+  local paths = {}
+  for _, v in ipairs(nixbuilds) do
+    if nix:verifyStorePath(v.id) then
+      table.insert(paths, v.id)
+    else
+      storage:remove(v)
+    end
+  end
+  local command = ui:prompt(paths)
+end
+
+--Nix build wrapper
+function Nixessity:build(command)
+  if not command then
+    build()
+  elseif command == 'list' then
+    buildlist()
+  end
+end
+
 --Nix expr wrapper
 function Nixessity:eval(expr)
   vim.api.nvim_put(nix:eval(expr), '', false, true)
@@ -73,26 +96,13 @@ function Nixessity.setup(opts)
   storage:init()
 
   vim.api.nvim_create_user_command('Nixhelp', function(args)
-    local cmd = args.fargs[1]
-    Nixessity:help(cmd)
-  end, { desc = 'nix {targetcmd} --help', nargs = 1 })
+    local command = args.fargs[1]
+    Nixessity:help(command)
+  end, { desc = 'nix {targetcommand} --help', nargs = 1 })
 
   vim.api.nvim_create_user_command('Nixbuild', function(args)
-    local cmd = args.fargs[1]
-    if not cmd then
-      Nixessity:build()
-    elseif cmd == 'list' then
-      local nixbuilds = storage:read()
-      local paths = {}
-      for _, v in ipairs(nixbuilds) do
-        if nix:verifyStorePath(v.id) then
-          table.insert(paths, v.id)
-        else
-          storage:remove(v)
-        end
-      end
-      ui:prompt(paths)
-    end
+    local command = args.fargs[1]
+    Nixessity:build(command)
   end, { desc = 'List nix projects', nargs = '?' })
 
   vim.api.nvim_create_user_command('Nixeval', function(args)
