@@ -3,6 +3,7 @@ local eb = require 'nixessity.nix.builder'
 local ui = require 'nixessity.ui'
 local log = require 'nixessity.log'
 local storage = require 'nixessity.storage'
+local cmd = require 'nixessity.cmd'
 
 local Nixessity = {}
 
@@ -55,8 +56,10 @@ local function build()
     local pkgs = nix:eval(expr, true)
     local pkg = ui:prompt(pkgs)
     log.debug('Nixbuild ' .. expr)
-    local outputpath = nix:build(projectsdir, project, pkg)
-    storage:add({ id = outputpath, flake = flake })
+    local derivation = nix:build(projectsdir, project, pkg)
+    local decodedDerivation = vim.fn.json_decode(derivation)
+    local id = decodedDerivation[1].outputs.out
+    storage:add({ id = id, flake = flake, package = pkg })
   end
 end
 
@@ -71,7 +74,22 @@ local function buildlist()
       storage:remove(v)
     end
   end
-  local command = ui:prompt(paths)
+  local item = storage:read({ id = ui:prompt(paths) })[1]
+  log.debug('Nixbuild list ' .. item.id)
+  local expr = eb:new()
+    :func(eb:new():import('<nixpkgs>'):attr('lib'):attr('getExe'):build(), {
+      val = eb:new()
+        :builtins('getFlake', { val = item.flake, isString = true })
+        :wrap()
+        :attr('packages')
+        :attr('${builtins.currentSystem}')
+        :attr(item.package)
+        :build(),
+      isString = false,
+    })
+    :build()
+  local command = nix:eval(expr, true)
+  local result = cmd:execute({ cmd = command, args = { 'hello' } })
 end
 
 --Nix build wrapper

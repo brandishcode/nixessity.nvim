@@ -37,7 +37,7 @@ require"nixessity".setup({ projectsdir = '~/nix/projects' })
 </tr>
 <tr>
 <td><code>list</code></td>
-<td>List built packages by nixessity (this also removes builds no longer in the nix store)</td>
+<td>List built packages by nixessity (this also removes builds no longer in the nix store). Selecting a package runs it</td>
 </tr>
 <tr>
 <td>Nixeval</td>

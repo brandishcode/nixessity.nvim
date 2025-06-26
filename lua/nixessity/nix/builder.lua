@@ -65,11 +65,9 @@ function ExpressionBuilder:import(module)
   return self
 end
 
-
 --Create new nix expression builder
 function ExpressionBuilder:new()
   return setmetatable({}, ExpressionBuilder)
 end
-
 
 return ExpressionBuilder

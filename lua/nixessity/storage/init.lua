@@ -19,6 +19,7 @@ function Storage:init()
   local nixbuild = tbl('nixbuild', {
     id = { type = 'string', required = true, primary = true },
     flake = { type = 'text', required = true },
+    package = { type = 'string', required = true },
     timestamp = { 'real', default = db.lib.julianday 'now' },
   })
   local nixdb = db {
@@ -40,11 +41,13 @@ function Storage:add(item)
   return Storage.__db.nixbuild:insert {
     id = item.id,
     flake = item.flake,
+    package = item.package,
   }
 end
 
 --Read the item in storage
 --@param item StorageItem|nil: item to be read, if nil read all
+--@return StorageItem
 function Storage:read(item)
   if item then
     return Storage.__db.nixbuild:get {
@@ -53,6 +56,8 @@ function Storage:read(item)
       },
       select = {
         'id',
+        'flake',
+        'package',
         'timestamp',
       },
     }

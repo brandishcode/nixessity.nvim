@@ -55,6 +55,7 @@ Example:
 local eb = require'nixessity.nix.builder'
 local expr = eb:new():func('myFunction', { val = 23, isString = false }):build()
 ```
+
 The above example will create `myFunction 23`.
 
 ## import

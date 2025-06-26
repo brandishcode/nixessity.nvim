@@ -29,17 +29,17 @@ end
 --@param projectsdir string: The root nix projects directory
 --@param project string: The project to build
 --@param pkg string: Target package to build
---@param string: The output path
+--@param table: The derivation
 function Nix:build(projectsdir, project, pkg)
-  return table.concat(cmd:execute({
+  return cmd:execute({
     cmd = 'nix',
     args = {
       'build',
       'path:' .. projectsdir .. '/' .. project .. '#' .. pkg,
-      '--print-out-paths',
       '--no-link',
+      '--json',
     },
-  }))
+  })
 end
 
 --Evaluate a nix flake
