@@ -8,6 +8,7 @@ Methods:
 - [wrap](#wrap)
 - [attr](#attr)
 - [func](#func)
+- [import](#import)
 
 ## builtins
 
@@ -16,7 +17,7 @@ Example:
 
 ```lua
 local eb = require'nixessity.nix.builder'
-local expr = eb.new():builtins('getFlake', { val = '/path/to/my/nix/flake/project', isString = true }):build()
+local expr = eb:new():builtins('getFlake', { val = '/path/to/my/nix/flake/project', isString = true }):build()
 ```
 
 The above example will create `builtins.getFlake "/path/to/my/nix/flake/project"`.
@@ -28,7 +29,7 @@ Example:
 
 ```lua
 local eb = require'nixessity.nix.builder'
-local expr = eb.new():builtins('isString', { val = 8, isString = false }):wrap():build()
+local expr = eb:new():builtins('isString', { val = 8, isString = false }):wrap():build()
 ```
 
 The above example will create `(builtins.isString 8)`
@@ -40,7 +41,7 @@ Example:
 
 ```lua
 local eb = require'nixessity.nix.builder'
-local expr = eb.new():builtins('getFlake', { val = '/path/to/my/nix/flake/project', isString = true }):wrap():attr('x'):build()
+local expr = eb:new():builtins('getFlake', { val = '/path/to/my/nix/flake/project', isString = true }):wrap():attr('x'):build()
 ```
 
 The above example will create `(builtins.getFlake "/path/to/my/nix/flake/project").x`
@@ -52,10 +53,21 @@ Example:
 
 ```lua
 local eb = require'nixessity.nix.builder'
-local expr = eb.new():func('myFunction', { val = 23, isString = false }):build()
+local expr = eb:new():func('myFunction', { val = 23, isString = false }):build()
+```
+The above example will create `myFunction 23`.
+
+## import
+
+Creates a nix import module expression.
+Example:
+
+```lua
+local eb = require'nixessity.nix.builder'
+local expr = eb:new():import('<nixpkgs>'):build()
 ```
 
-The above example will create `myFunction 23`.
+The above example will crate `(import <nixpkgs> {})`.
 
 # Nix
 

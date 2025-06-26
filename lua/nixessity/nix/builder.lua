@@ -59,9 +59,17 @@ function ExpressionBuilder:build()
   return self.__acc
 end
 
+--Import nix expression
+function ExpressionBuilder:import(module)
+  self.__acc = string.format('(import %s {})', module)
+  return self
+end
+
+
 --Create new nix expression builder
 function ExpressionBuilder:new()
   return setmetatable({}, ExpressionBuilder)
 end
+
 
 return ExpressionBuilder
