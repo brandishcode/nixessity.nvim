@@ -2,9 +2,12 @@
   lib,
   mkShell,
   neovim,
+  sqlite,
   wrapNeovimUnstable,
   vimPlugins,
   pname,
+  symlinkJoin,
+  makeWrapper,
   ...
 }:
 
@@ -47,10 +50,20 @@ let
   neovimWrapped = wrapNeovimUnstable neovim {
     inherit luaRcContent plugins;
   };
+  sqliteWrapped = symlinkJoin {
+    name = "sqlitewrapped";
+    paths = [ sqlite ];
+    buildInputs = [ makeWrapper ];
+    postBuild = ''
+      wrapProgram $out/bin/sqlite3 \
+        --add-flags "~/.local/share/nvim/nixessity"
+    '';
+  };
 in
 mkShell {
   packages = [
     neovimWrapped
+    sqliteWrapped
   ];
 
   inputsFrom = [ ];
