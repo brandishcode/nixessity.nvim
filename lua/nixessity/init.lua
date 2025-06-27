@@ -38,7 +38,7 @@ local function build()
     end
   end
 
-  local project = ui:prompt(projectsMod)
+  local project = ui:promptlist(projectsMod)
   if project then
     local flake = projectsdir .. '/' .. project
     local expr = eb:new()
@@ -54,7 +54,7 @@ local function build()
       })
       :build()
     local pkgs = nix:eval(expr, true)
-    local pkg = ui:prompt(pkgs)
+    local pkg = ui:promptlist(pkgs)
     log.debug('Nixbuild ' .. expr)
     local derivation = nix:build(projectsdir, project, pkg)
     local decodedDerivation = vim.fn.json_decode(derivation)
@@ -74,7 +74,7 @@ local function buildlist()
       storage:remove(v)
     end
   end
-  local item = storage:read({ id = ui:prompt(paths) })[1]
+  local item = storage:read({ id = ui:promptlist(paths) })[1]
   log.debug('Nixbuild list ' .. item.id)
   local expr = eb:new()
     :func(eb:new():import('<nixpkgs>'):attr('lib'):attr('getExe'):build(), {
@@ -89,7 +89,7 @@ local function buildlist()
     })
     :build()
   local command = nix:eval(expr, true)
-  local result = cmd:execute({ cmd = command, args = { 'hello' } })
+  log.debug(ui:prompt(command))
 end
 
 --Nix build wrapper
