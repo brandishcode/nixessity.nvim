@@ -17,7 +17,7 @@ function Nixessity:help(command)
 end
 
 ---Nix build
-local function build()
+function Nixessity:build()
   local projectsdir = Nixessity.__projectsdir
   local projects = nix:projects(projectsdir)
   if #projects <= 0 then
@@ -62,7 +62,7 @@ local function build()
 end
 
 ---Nix build list
-local function buildlist()
+function Nixessity:build_run()
   local nixbuilds = storage:read()
   local paths = {}
   for _, v in ipairs(nixbuilds) do
@@ -90,15 +90,6 @@ local function buildlist()
   log.debug(ui:prompt(command))
 end
 
----Nix build wrapper
-function Nixessity:build(command)
-  if not command then
-    build()
-  elseif command == 'list' then
-    buildlist()
-  end
-end
-
 --Nix expr wrapper
 function Nixessity:eval(expr)
   vim.api.nvim_put(nix:eval(expr), '', false, true)
@@ -117,8 +108,17 @@ function Nixessity.setup(opts)
   end, { desc = 'nix {targetcommand} --help', nargs = 1 })
 
   vim.api.nvim_create_user_command('Nixbuild', function(args)
-    local command = args.fargs[1]
-    Nixessity:build(command)
+    ---@enum nixbuild_args
+    local ARGS = {
+      run = 'run',
+    }
+    if args.fargs[1] == ARGS.run then
+      Nixessity:build_run()
+    elseif not args.fargs[1] then
+      Nixessity:build()
+    else
+      error(string.format('Nixbuild: incorrect argument %s', args.fargs[1]))
+    end
   end, { desc = 'List nix projects', nargs = '?' })
 
   vim.api.nvim_create_user_command('Nixeval', function(args)
