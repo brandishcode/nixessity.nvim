@@ -35,7 +35,7 @@ function Nix:build(projectsdir, project, pkg, cb)
       '--no-link',
       '--json',
     },
-    cb = function(res)
+    exitCb = function(res)
       return cb(vim.fn.json_decode(res))
     end,
   })

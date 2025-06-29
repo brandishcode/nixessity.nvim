@@ -17,7 +17,8 @@ local Cmd = {}
 ---@class ExecuteOpts
 ---@field cmd string # the command to execute
 ---@field args string[] # the arguments for the command
----@field cb? function # the callback to be called on_exit
+---@field exitCb? fun(result: string[]) # the callback to be called on_exit
+---@field stdoutCb? fun(data: string) # the callback to be called on_stdout
 
 ---Execute a shell command
 ---@param opts ExecuteOpts # execute options
@@ -48,15 +49,21 @@ end
 function Cmd:executeAsync(opts)
   local cmd = opts.cmd
   local args = opts.args
-  local cb = opts.cb
+  local exitCb = opts.exitCb
+  local stdoutCb = opts.stdoutCb
 
   local exe = job:new({
     command = cmd,
     args = args,
     detached = true,
+    on_stdout = vim.schedule_wrap(function(_, data)
+      if stdoutCb ~= nil then
+        stdoutCb(data)
+      end
+    end),
     on_exit = vim.schedule_wrap(function(j, return_val)
-      if cb ~= nil then
-        cb(call(return_val, j:result(), j:stderr_result()))
+      if exitCb ~= nil then
+        exitCb(call(return_val, j:result(), j:stderr_result()))
       end
     end),
   })

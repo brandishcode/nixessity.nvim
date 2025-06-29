@@ -3,6 +3,7 @@ local eb = require 'nixessity.nix.builder'
 local ui = require 'nixessity.ui'
 local log = require 'nixessity.log'
 local storage = require 'nixessity.storage'
+local cmd = require 'nixessity.cmd'
 
 local Nixessity = {}
 
@@ -87,7 +88,17 @@ function Nixessity:build_run()
     })
     :build()
   local command = nix:eval(expr)
-  log.debug(ui:prompt(command))
+  local args = ui:prompt(string.format('Arguments for %s: ', command))
+  --- TODO 
+  cmd:executeAsync({
+    cmd = command,
+    args = { args },
+    stdoutCb = function(data)
+      if data ~= nil then
+        vim.fn.append(vim.fn.line('$'), data)
+      end
+    end,
+  })
 end
 
 --Nix expr wrapper
