@@ -1,34 +1,31 @@
 local cmd = require 'nixessity.cmd'
+
 local Nix = {}
 
---Print the 'nix {targetCmd} --help' documentation
---@param targetCmd string: The nix flake command to print documentation
---@return the 'nix {targetCmd}' documentation
+---Print the 'nix {targetCmd} --help' documentation
+---@param targetCmd string # The nix flake command to print documentation
+---@return table # the 'nix {targetCmd}' documentation
 function Nix:help(targetCmd)
   return cmd:execute({ cmd = 'nix', args = { targetCmd, '--help' } })
 end
 
-local removeFlakeNixSuffix = function(projects)
-  local result = {}
-  for _, v in ipairs(projects) do
-    table.insert(result, string.sub(v, 1, -11)) --remove the '/flake.nix'
-  end
-  return result
-end
-
---Get the project folders that contains 'flake.nix'
---@param projectsdir string: The root projects directory
---@return a list of nix projects
+---Get the project folders that contains 'flake.nix'
+---@param projectsdir string # The root projects directory
+---@return string[] # a list of nix projects
 function Nix:projects(projectsdir)
-  local projects =
+  local res =
     cmd:execute({ cmd = 'find', args = { projectsdir, '-name', 'flake.nix', '-printf', '%P\n' } })
-  return removeFlakeNixSuffix(projects)
+  local projects = {}
+  for _, v in ipairs(res) do
+    table.insert(projects, string.sub(v, 1, -11)) --remove the '/flake.nix'
+  end
+  return projects
 end
 
 --Build project flake
---@param projectsdir string: The root nix projects directory
---@param project string: The project to build
---@param pkg string: Target package to build
+---@param projectsdir string # The root nix projects directory
+---@param project string # The project to build
+---@param pkg string # Target package to build
 function Nix:build(projectsdir, project, pkg, cb)
   cmd:executeAsync({
     cmd = 'nix',
@@ -38,59 +35,46 @@ function Nix:build(projectsdir, project, pkg, cb)
       '--no-link',
       '--json',
     },
-    cb = cb,
+    cb = function(res)
+      return cb(vim.fn.json_decode(res))
+    end,
   })
 end
 
---Evaluate a nix flake
---@param expr string: The nix expression
---@param json boolean: set true if json return is needed
-function Nix:eval(expr, json)
-  local args = {
-    'eval',
-    '--expr',
-    expr,
-    '--impure',
-  }
-
-  if json then
-    table.insert(args, '--json')
-  end
-
-  local result = cmd:execute({
+---Evaluate a nix flake
+---@param expr string # The nix expression
+function Nix:eval(expr)
+  local res = cmd:execute({
     cmd = 'nix',
-    args = args,
+    args = {
+      'eval',
+      '--expr',
+      expr,
+      '--impure',
+      '--json',
+    },
   })
-
-  if json then
-    result = vim.fn.json_decode(result)
-  end
-
-  return result
+  return vim.fn.json_decode(res)
 end
 
---Verify integrity of a nix store path
---@param storepath string: the nix store path to verify
---@return true if verification success, otherwise false
+---Verify integrity of a nix store path
+---@param storepath string # the nix store path to verify
+---@return boolean # true if verification success, otherwise false
 function Nix:verifyStorePath(storepath)
-  local args = {
-    'store',
-    'verify',
-    storepath,
-    '--quiet',
-  }
-
-  local result = cmd:execute({
+  local ok = pcall(cmd.execute, nil, {
     cmd = 'nix',
-    args = args,
-    returnError = true,
+    args = {
+      'store',
+      'verify',
+      storepath,
+      '--quiet',
+    },
   })
-
-  if table.concat(result, '\n') == '' then
+  if not ok then
+    return false
+  else
     return true
   end
-
-  return false
 end
 
 return Nix

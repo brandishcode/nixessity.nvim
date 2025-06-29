@@ -1,21 +1,30 @@
 local job = require 'plenary.job'
-local log = require 'nixessity.log'
+
+---Call wrapper to handle errors from plenary.jobs
+---@param code integer # the return code
+---@param res string[] # the stdout of command
+---@param err string[] # the stderr of command
+local function call(code, res, err)
+  if code == 0 then
+    return res
+  else
+    error(table.concat(err, '\n'))
+  end
+end
 
 local Cmd = {}
 
---@class ExecuteOpts
---@field cmd string: the command to execute
---@field args string[]: the arguments for the command
---@field returnError boolean: set true if you want to return error value (only if there is error as well)
---@field cb function: the callback to be called on_exit
+---@class ExecuteOpts
+---@field cmd string # the command to execute
+---@field args string[] # the arguments for the command
+---@field cb? function # the callback to be called on_exit
 
---Execute a shell command
---@param opts ExecuteOpts: execute options
---@return the cmd output or error
+---Execute a shell command
+---@param opts ExecuteOpts # execute options
+---@return table # the cmd output or error
 function Cmd:execute(opts)
   local cmd = opts.cmd
   local args = opts.args
-  local returnError = opts.returnError
 
   local err = {}
   local exe = job:new({
@@ -31,19 +40,11 @@ function Cmd:execute(opts)
 
   local res, code = exe:sync()
 
-  if returnError then
-    return err
-  end
-
-  if code == 0 then
-    return res
-  else
-    error(table.concat(err, '\n'))
-  end
+  return call(code, res, err)
 end
 
---Execute a shell command asynchronously and execute a callback function
---@param opts ExecuteOpts: execute options
+---Execute a shell command asynchronously and execute a callback function
+---@param opts ExecuteOpts # execute options
 function Cmd:executeAsync(opts)
   local cmd = opts.cmd
   local args = opts.args
@@ -54,10 +55,8 @@ function Cmd:executeAsync(opts)
     args = args,
     detached = true,
     on_exit = vim.schedule_wrap(function(j, return_val)
-      if return_val == 0 then
-        cb(vim.fn.json_decode(j:result()))
-      else
-        log.error('Nixbuild failed with error ' .. return_val)
+      if cb ~= nil then
+        cb(call(return_val, j:result(), j:stderr_result()))
       end
     end),
   })

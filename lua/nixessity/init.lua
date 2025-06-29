@@ -8,20 +8,18 @@ local Nixessity = {}
 
 Nixessity.__projectsdir = ''
 
---Nix <command> --help wrapper
---@param command string: The target command
---@return the help document
+---Nix <command> --help wrapper
+---@param command string # The target command
 function Nixessity:help(command)
   log.debug('Nixhelp ' .. command)
   local doc = nix:help(command)
   ui:opendoc('nixhelp ' .. command .. ' --help', doc)
 end
 
---Nix build
+---Nix build
 local function build()
   local projectsdir = Nixessity.__projectsdir
   local projects = nix:projects(projectsdir)
-
   if #projects <= 0 then
     log.warn('No nix flake projects found!')
     return
@@ -52,19 +50,18 @@ local function build()
         isString = false,
       })
       :build()
-    local pkgs = nix:eval(expr, true)
+    local pkgs = nix:eval(expr)
     local pkg = ui:promptlist(pkgs)
     log.debug('Nixbuild ' .. expr)
-    local function cb(derivation)
+    nix:build(projectsdir, project, pkg, function(derivation)
       local id = derivation[1].outputs.out
       storage:add({ id = id, flake = flake, package = pkg })
       vim.notify('Nixbuild successful ' .. id, vim.log.levels.INFO)
-    end
-    nix:build(projectsdir, project, pkg, cb)
+    end)
   end
 end
 
---Nix build list
+---Nix build list
 local function buildlist()
   local nixbuilds = storage:read()
   local paths = {}
@@ -89,11 +86,11 @@ local function buildlist()
       isString = false,
     })
     :build()
-  local command = nix:eval(expr, true)
+  local command = nix:eval(expr)
   log.debug(ui:prompt(command))
 end
 
---Nix build wrapper
+---Nix build wrapper
 function Nixessity:build(command)
   if not command then
     build()
