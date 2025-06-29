@@ -13,8 +13,7 @@ Nixessity.__projectsdir = ''
 ---@param command string # The target command
 function Nixessity:help(command)
   log.debug('Nixhelp ' .. command)
-  local doc = nix:help(command)
-  ui:opendoc('nixhelp ' .. command .. ' --help', doc)
+  ui:opendoc('nixhelp ' .. command .. ' --help', command)
 end
 
 ---Nix build
@@ -89,7 +88,7 @@ function Nixessity:build_run()
     :build()
   local command = nix:eval(expr)
   local args = ui:prompt(string.format('Arguments for %s: ', command))
-  --- TODO 
+  --- TODO
   cmd:executeAsync({
     cmd = command,
     args = { args },

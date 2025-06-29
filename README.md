@@ -27,7 +27,7 @@ require"nixessity".setup({ projectsdir = '~/nix/projects' })
 </tr>
 <tr>
 <td>Nixhelp</td>
-<td><code>build</code>, <code>run</code>, and etc.</td>
+<td><code>build</code>, <code>nix-env</code>, <code>nixos-rebuild</code>, and etc.</td>
 <td>Print the target nix command documentation</td>
 </tr>
 <tr>
@@ -49,7 +49,6 @@ require"nixessity".setup({ projectsdir = '~/nix/projects' })
 
 # Roadmap
 
-- Proper documentation viewing
 - `nix build` wrapping
 - `nix eval` wrapping
 

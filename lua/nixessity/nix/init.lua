@@ -2,13 +2,6 @@ local cmd = require 'nixessity.cmd'
 
 local Nix = {}
 
----Print the 'nix {targetCmd} --help' documentation
----@param targetCmd string # The nix flake command to print documentation
----@return table # the 'nix {targetCmd}' documentation
-function Nix:help(targetCmd)
-  return cmd:execute({ cmd = 'nix', args = { targetCmd, '--help' } })
-end
-
 ---Get the project folders that contains 'flake.nix'
 ---@param projectsdir string # The root projects directory
 ---@return string[] # a list of nix projects
