@@ -3,7 +3,6 @@ local eb = require 'nixessity.nix.builder'
 local ui = require 'nixessity.ui'
 local log = require 'nixessity.log'
 local storage = require 'nixessity.storage'
-local cmd = require 'nixessity.cmd'
 
 local Nixessity = {}
 
@@ -56,10 +55,12 @@ local function build()
     local pkgs = nix:eval(expr, true)
     local pkg = ui:promptlist(pkgs)
     log.debug('Nixbuild ' .. expr)
-    local derivation = nix:build(projectsdir, project, pkg)
-    local decodedDerivation = vim.fn.json_decode(derivation)
-    local id = decodedDerivation[1].outputs.out
-    storage:add({ id = id, flake = flake, package = pkg })
+    local function cb(derivation)
+      local id = derivation[1].outputs.out
+      storage:add({ id = id, flake = flake, package = pkg })
+      vim.notify('Nixbuild successful ' .. id, vim.log.levels.INFO)
+    end
+    nix:build(projectsdir, project, pkg, cb)
   end
 end
 

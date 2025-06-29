@@ -29,9 +29,8 @@ end
 --@param projectsdir string: The root nix projects directory
 --@param project string: The project to build
 --@param pkg string: Target package to build
---@param table: The derivation
-function Nix:build(projectsdir, project, pkg)
-  return cmd:execute({
+function Nix:build(projectsdir, project, pkg, cb)
+  cmd:executeAsync({
     cmd = 'nix',
     args = {
       'build',
@@ -39,6 +38,7 @@ function Nix:build(projectsdir, project, pkg)
       '--no-link',
       '--json',
     },
+    cb = cb,
   })
 end
 
