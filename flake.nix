@@ -20,8 +20,6 @@
       system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
-        pname = "nixessity.nvim";
-        lua = pkgs.lua5_4;
         neovim = neovim-nightly-overlay.packages.${system}.default;
       in
       {
@@ -30,8 +28,8 @@
           formatting = self.treefmtEval.${system}.config.build.check self;
         };
         devShells = {
-          default = pkgs.callPackage ./. {
-            inherit pname lua neovim;
+          default = pkgs.callPackage ./shell.nix {
+            inherit neovim;
           };
         };
       }

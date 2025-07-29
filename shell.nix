@@ -1,21 +1,16 @@
 {
-  lib,
-  mkShell,
+  pkgs ? import <nixpkgs> { },
   neovim,
-  sqlite,
-  wrapNeovimUnstable,
-  vimPlugins,
-  pname,
-  symlinkJoin,
-  makeWrapper,
   ...
 }:
 
 let
-  moduleName = (lib.strings.removeSuffix ".nvim" pname);
+
+  pname = "nixessity.nvim";
+  moduleName = (pkgs.lib.strings.removeSuffix ".nvim" pname);
 
   # neovim setup
-  luaRcContent = with vimPlugins; ''
+  luaRcContent = with pkgs.vimPlugins; ''
     local pluginName = '${pname}'
     local moduleName = '${moduleName}'
     local sqlite = '${sqlite-lua}'
@@ -36,31 +31,31 @@ let
     vim.keymap.set('n', '<leader>lr', '<cmd>Lazy reload ' .. pluginName .. '<cr>')
   '';
   # a list of nixvim module dependencies
-  pluginDeps = with vimPlugins; [
+  pluginDeps = with pkgs.vimPlugins; [
     plenary-nvim
     sqlite-lua
   ];
   plugins =
-    with vimPlugins;
+    with pkgs.vimPlugins;
     [
       # lazy-nvim by default is needed for easily module reloading
       lazy-nvim
     ]
     ++ pluginDeps;
-  neovimWrapped = wrapNeovimUnstable neovim {
+  neovimWrapped = pkgs.wrapNeovimUnstable neovim {
     inherit luaRcContent plugins;
   };
-  sqliteWrapped = symlinkJoin {
+  sqliteWrapped = pkgs.symlinkJoin {
     name = "sqlitewrapped";
-    paths = [ sqlite ];
-    buildInputs = [ makeWrapper ];
+    paths = [ pkgs.sqlite ];
+    buildInputs = [ pkgs.makeWrapper ];
     postBuild = ''
       wrapProgram $out/bin/sqlite3 \
         --add-flags "~/.local/share/nvim/nixessity"
     '';
   };
 in
-mkShell {
+pkgs.mkShell {
   packages = [
     neovimWrapped
     sqliteWrapped
