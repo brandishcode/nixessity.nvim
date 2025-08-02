@@ -1,5 +1,6 @@
 {
   pkgs ? import <nixpkgs> { },
+  neovim,
   ...
 }:
 
@@ -41,7 +42,7 @@ let
       lazy-nvim
     ]
     ++ pluginDeps;
-  neovimWrapped = pkgs.wrapNeovimUnstable pkgs.neovim {
+  neovimWrapped = pkgs.wrapNeovimUnstable neovim {
     inherit luaRcContent plugins;
   };
   sqliteWrapped = pkgs.symlinkJoin {
