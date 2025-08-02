@@ -1,6 +1,7 @@
 {
   pkgs ? import <nixpkgs> { },
   neovim,
+  nixessitycore,
   ...
 }:
 
@@ -59,6 +60,7 @@ pkgs.mkShell {
   packages = [
     neovimWrapped
     sqliteWrapped
+    nixessitycore
   ];
 
   inputsFrom = [ ];

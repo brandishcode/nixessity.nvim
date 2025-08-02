@@ -5,6 +5,7 @@
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
     bcfmt.url = "github:brandishcode/brandishcode-formatter";
+    bcpkgs.url = "github:brandishcode/brandishcode-packages";
     neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
   };
 
@@ -14,6 +15,7 @@
       nixpkgs,
       flake-utils,
       bcfmt,
+      bcpkgs,
       neovim-nightly-overlay,
     }:
     flake-utils.lib.eachDefaultSystem (
@@ -21,6 +23,7 @@
       let
         pkgs = nixpkgs.legacyPackages.${system};
         neovim = neovim-nightly-overlay.packages.${system}.default;
+        nixessitycore = bcpkgs.packages.${system}.default;
       in
       {
         formatter = bcfmt.formatter.${system};
@@ -29,7 +32,7 @@
         };
         devShells = {
           default = pkgs.callPackage ./shell.nix {
-            inherit neovim;
+            inherit neovim nixessitycore;
           };
         };
       }
