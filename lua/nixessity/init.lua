@@ -38,21 +38,9 @@ function Nixessity:build()
   local project = ui:promptlist(projectsMod)
   if project then
     local flake = projectsdir .. '/' .. project
-    local expr = eb:new()
-      :builtins('attrNames', {
-        val = eb:new()
-          :builtins('getFlake', { val = flake, isString = true })
-          :wrap()
-          :attr('packages')
-          :attr('${builtins.currentSystem}')
-          :wrap()
-          :build(),
-        isString = false,
-      })
-      :build()
-    local pkgs = nix:eval(expr)
+    local pkgs = nix:flake_packages(flake)
     local pkg = ui:promptlist(pkgs)
-    log.debug('Nixbuild ' .. expr)
+    -- log.debug('Nixbuild ' .. expr)
     nix:build(projectsdir, project, pkg, function(derivation)
       local id = derivation[1].outputs.out
       storage:add({ id = id, flake = flake, package = pkg })

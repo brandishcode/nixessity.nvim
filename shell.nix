@@ -1,50 +1,25 @@
 {
   pkgs ? import <nixpkgs> { },
-  neovim,
+  nixvim,
   nixessitycore,
   ...
 }:
 
 let
-
-  pname = "nixessity.nvim";
-  moduleName = (pkgs.lib.strings.removeSuffix ".nvim" pname);
-
-  # neovim setup
-  luaRcContent = with pkgs.vimPlugins; ''
-    local pluginName = '${pname}'
-    local moduleName = '${moduleName}'
-    local sqlite = '${sqlite-lua}'
-
-    require 'lazy'.setup({
-      {
-        dir = vim.fn.getcwd(),
-        config = function()
-          require(moduleName).setup({ projectsdir = vim.fn.getcwd() .. '/sandbox' })
-        end,
-      },
-      {
-        dir = sqlite
-      }
-    })
-
-    vim.g.mapleader = ' '
-    vim.keymap.set('n', '<leader>lr', '<cmd>Lazy reload ' .. pluginName .. '<cr>')
-  '';
-  # a list of nixvim module dependencies
-  pluginDeps = with pkgs.vimPlugins; [
-    plenary-nvim
-    sqlite-lua
-  ];
-  plugins =
-    with pkgs.vimPlugins;
-    [
-      # lazy-nvim by default is needed for easily module reloading
-      lazy-nvim
-    ]
-    ++ pluginDeps;
-  neovimWrapped = pkgs.wrapNeovimUnstable neovim {
-    inherit luaRcContent plugins;
+  neovim = nixvim.legacyPackages.${pkgs.system}.makeNixvim {
+    extraConfigLuaPost = ''
+      require 'nixessity'.setup({ projectsdir = vim.fn.getcwd() .. '/sandbox' })
+    '';
+    extraPlugins = [
+      (pkgs.vimUtils.buildVimPlugin {
+        name = "nixessity";
+        src = ./.;
+        dependencies = with pkgs.vimPlugins; [
+          plenary-nvim
+          sqlite-lua
+        ];
+      })
+    ];
   };
   sqliteWrapped = pkgs.symlinkJoin {
     name = "sqlitewrapped";
@@ -58,9 +33,9 @@ let
 in
 pkgs.mkShell {
   packages = [
-    neovimWrapped
     sqliteWrapped
     nixessitycore
+    neovim
   ];
 
   inputsFrom = [ ];

@@ -70,4 +70,17 @@ function Nix:verifyStorePath(storepath)
   end
 end
 
+---Get packages of a local flake
+---@param flakePath string the flake path
+function Nix:flake_packages(flakePath)
+  local res = cmd:execute({
+    cmd = 'flake_packages',
+    args = {
+      flakePath,
+      '--local'
+    }
+  })
+  return vim.fn.json_decode(res)
+end
+
 return Nix
