@@ -77,8 +77,8 @@ function Nix:flake_packages(flakePath)
     cmd = 'flake_packages',
     args = {
       flakePath,
-      '--local'
-    }
+      '--local',
+    },
   })
   return vim.fn.json_decode(res)
 end
