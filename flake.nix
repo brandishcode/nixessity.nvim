@@ -5,7 +5,7 @@
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
     bcfmt.url = "github:brandishcode/brandishcode-formatter";
-    nixessitycore.url = "github:brandishcode/nixessitycore?ref=v1.1.2-alpha";
+    nixessitycore.url = "github:brandishcode/nixessitycore?ref=v1.1.4-0";
     nixvim.url = "github:nix-community/nixvim";
     nixvim.inputs.nixpkgs.follows = "nixpkgs";
   };
